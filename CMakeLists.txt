@@ -7,7 +7,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUIL
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}")
 
 add_executable(dragonslayer "./src/Main.cpp"
-        src/glad.c)
+        src/glad.c
+        src/shader.cpp
+)
 
-include_directories(dragonslayer "${CMAKE_CURRENT_SOURCE_DIR}/include")
-link_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib")
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_link_libraries(dragonslayer "${CMAKE_CURRENT_SOURCE_DIR}/lib/glfw3.lib")

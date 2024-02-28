@@ -1,15 +1,45 @@
 #include <iostream>
-#include <string>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+void windowResizeCallback(GLFWwindow *window, int height, int width) {
+    glViewport(0, 0, width, height);
+}
 
 int main()
 {
-    std::string name;
-    int age;
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    std::cin >> name >> age;
+    GLFWwindow *window = glfwCreateWindow(
+    800,
+    600,
+    "DragonSlayer",
+    nullptr,
+    nullptr
+    );
 
-    std::cout << "Bem vindo, " << name << "!" << std::endl;
-    std::cout << "Voce certamente nasceu em " << (2024 - age) << " se ja tiver feito aniversario!" << std::endl;
+    if(window == nullptr) {
+        std::cerr << "" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, windowResizeCallback);
+    gladLoadGL();
+
+    glClearColor(0.5f, 0.1f, 0.6f, 1.0f);
+    glViewport(0 , 0, 800, 600);
+
+    while(!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        glClear(GL_COLOR_CLEAR_VALUE);
+        glfwSwapBuffers(window);
+    }
+
+    glfwTerminate();
     return 0;
 }
