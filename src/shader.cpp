@@ -1,4 +1,4 @@
-#include <shaders.h>
+#include <shaders.hpp>
 
 using std::string;
 using std::ifstream;

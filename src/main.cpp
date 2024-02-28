@@ -1,7 +1,7 @@
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <shaders.h>
+#include <glad/glad.hpp>
+#include <GLFW/glfw3.hpp>
+#include <shaders.hpp>
 
 void windowResizeCallback(GLFWwindow *window, int height, int width) {
     glViewport(0, 0, width, height);
