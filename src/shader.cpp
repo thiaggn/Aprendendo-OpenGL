@@ -6,6 +6,7 @@ using std::stringstream;
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
+    // Lê o arquivo do vertex e fragment shader
     string vertexCode, fragmentCode;
     ifstream vertexShaderFile, fragmentShaderFile;
 
@@ -39,7 +40,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
     int success;
     char infoLog[512];
 
-    // Compiles vertex shader
+    // Inicializa e compila o vertex shader
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderCode, nullptr);
     glCompileShader(vertexShader);
@@ -51,7 +52,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n " << infoLog << std::endl;
     }
 
-    // Compiles fragment shader
+    // Inicializa e compila o fragment shader
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderCode, nullptr);
     glCompileShader(fragmentShader);
@@ -63,6 +64,11 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n " << infoLog << std::endl;
     }
 
+    /* No livro, é dito que num pipeline gráfico, a saída de um shader é a entrada do próximo.
+     * Nesse sentido, os dados que o vertex shader produz são os dados que o fragment shader recebe.
+     * Por isso, solicitamos ao OpenGL que faça o 'link' dos shaders que criamos num Programa, que os
+     * executará em sequência, passando a saída de um como entrada de outro.
+     */
     this->id = glCreateProgram();
     glAttachShader(this->id, vertexShader);
     glAttachShader(this->id, fragmentShader);
@@ -77,7 +83,6 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
 }
 
 void Shader::use() {
