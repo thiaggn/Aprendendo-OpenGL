@@ -7,70 +7,93 @@ void windowResizeCallback(GLFWwindow *window, int height, int width) {
     glViewport(0, 0, width, height);
 }
 
-int main()
-{
+int main() {
+    // glfw: initialize and configure
+    // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
+#endif
+
+    // glfw: window creation
+    // ---------------------
+
     GLFWwindow *window = glfwCreateWindow(
-    800,
-    600,
-    "DragonSlayer",
-    nullptr,
-    nullptr
+            800,
+            600,
+            "DragonSlayer",
+            nullptr,
+            nullptr
     );
 
-    if(window == nullptr)
-    {
+    if (window == nullptr) {
         std::cerr << "" << std::endl;
         glfwTerminate();
         return -1;
     }
 
-
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, windowResizeCallback);
+
+    // glad: load all opengl function pointers
+    // ---------------------------------------
+
     gladLoadGL();
 
-    glClearColor(0.5f, 0.1f, 0.6f, 1.0f);
-    glViewport(0 , 0, 800, 600);
+    // build and compile our shader program
+    // ------------------------------------
 
     char fragmentShaderPath[] = R"(D:\Thiago\DragonSlayer\resources\fragmentShader.glsl)";
     char vertexShaderPath[] = R"(D:\Thiago\DragonSlayer\resources\vertexShader.glsl)";
-
     Shader shader(vertexShaderPath, fragmentShaderPath);
 
+    // set up vertex data and buffers; configure vertex attributes
+    // -----------------------------------------------------------
+
     float vertices[] = {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
+            -0.5f, -0.5f, 0.0f,     // left
+            0.5f, -0.5f, 0.0f,     // right
+            0.0f, 0.5f, 0.0f      // top
     };
 
-    /*  VBO é o buffer onde se armazena vértices.
-     *  |> ACESSO AOS DADOS:
-     *      DRAW: O usuário escreverá dados no buffer, mas não os lê.
-     *          É útil, para como o nome sugere, desenhar. O usuário está escrevendo dados, mas apenas o OpenGL os está lendo.
-     *      READ: O usuário não escreverá dados no buffer, mas os lerá.
-     *          É comum ser usado quando um buffer é usado como um destino para os comandos do OpenGL.
-     *      COPY: O usuário nem escreverá dados no buffem, nem os lerá.
-     *          É usado quando um buffer passa dados de um lugar no OpenGL para outro, como uma imagem.
-     *
-     *  |> FREQUENCIA DE MODIFICACAO DOS DADOS:
-     *      STATIC: Dados são escritos no buffer uma única vez
-     *      DYNAMIC: Dados são escritos no buffer ocasionalmente
-     *      STREAM: Dados são alterados no buffer a cada loop de renderização
-     */
+
+    glClearColor(0.5f, 0.1f, 0.6f, 1.0f);
+    glViewport(0, 0, 800, 600);
+
+    // bind the VAO first, then bind and set the vertex buffers, and then configure vertex attributes
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
     unsigned int VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(VBO, GL_ARRAY_BUFFER);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), (void *) 1);
+    glEnableVertexAttribArray(0);
 
-    while(!glfwWindowShouldClose(window))
-    {
-        glClear(GL_COLOR_CLEAR_VALUE);
+
+    glBindVertexArray(VAO);
+
+    while (!glfwWindowShouldClose(window)) {
+        // render
+        // ------
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        shader.use();
+        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glBindVertexArray(0); // no need to unbind it every time
+
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
