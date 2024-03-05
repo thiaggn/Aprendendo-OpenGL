@@ -1,4 +1,5 @@
 #include <shaders.hpp>
+#include <GLFW/glfw3.hpp>
 
 using std::string;
 using std::ifstream;
@@ -64,11 +65,6 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n " << infoLog << std::endl;
     }
 
-    /* No livro, é dito que num pipeline gráfico, a saída de um shader é a entrada do próximo.
-     * Nesse sentido, os dados que o vertex shader produz são os dados que o fragment shader recebe.
-     * Por isso, solicitamos ao OpenGL que faça o 'link' dos shaders que criamos num Programa, que os
-     * executará em sequência, passando a saída de um como entrada de outro.
-     */
     this->id = glCreateProgram();
     glAttachShader(this->id, vertexShader);
     glAttachShader(this->id, fragmentShader);
@@ -81,12 +77,23 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
 
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
 
-void Shader::use() {
+void Shader::use() const {
     glUseProgram(this->id);
+//
+//    auto timeValue = (float)glfwGetTime();
+//    float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+//    int vertexColorLocation = glGetUniformLocation(this->id, "ourColor");
+//    glUniform4f(vertexColorLocation,  0.0f, greenValue, 0.0f, 1.0f);
+
+    /*Note that finding the uniform location does not require you to use the shader program first, but updating a
+    uniform does require you to first use the program (by calling glUseProgram), because it sets the
+    uniform on the currently active shader program.*/
+
 }
 
 void Shader::set(const string &variable_name, int value) const {

@@ -1,0 +1,3 @@
+D:/Thiago/DragonSlayer/cmake-build-debug-ninja/CMakeFiles/dragonslayer.dir
+D:/Thiago/DragonSlayer/cmake-build-debug-ninja/CMakeFiles/edit_cache.dir
+D:/Thiago/DragonSlayer/cmake-build-debug-ninja/CMakeFiles/rebuild_cache.dir
