@@ -4,8 +4,7 @@
 #include <shaders.hpp>
 
 
-void resize(GLFWwindow *window, int width, int height)
-{
+void resize(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
@@ -50,7 +49,7 @@ int main() {
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *) (3 * sizeof(float)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
 
@@ -59,7 +58,14 @@ int main() {
     glBindVertexArray(0);
 
     glClearColor(0.3f, 0.1f, 0.7f, 1.0f);
-    
+
+
+    float texture_coords[] = {
+            0.0f, 0.0f,
+            1.0f, 0.0f,
+            0.5f, 1.0f
+    };
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         glClear(GL_COLOR_BUFFER_BIT);
