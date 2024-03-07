@@ -1,10 +1,20 @@
 #version 330 core
-
-in vec4 outpos;
 out vec4 FragColor;
 
+in vec3 ourColor;
+in vec2 TexCoord;
+
+uniform sampler2D texture0;
+uniform sampler2D texture1;
+uniform float mixValue;
 
 void main()
 {
-    FragColor = outpos;
+    float pi2 = 3.14 / 2;
+
+    FragColor = mix(
+        texture(texture0, TexCoord),
+        texture(texture1, TexCoord),
+        mixValue
+    );
 }
