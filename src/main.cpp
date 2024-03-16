@@ -3,7 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <shaders.hpp>
-#include <iostream>
+#include <cstdio>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -44,7 +44,6 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-
     /* GLFW: window creation
      -----------------------*/
     GLFWwindow *window = glfwCreateWindow(800, 600, "aprendendo opengl", nullptr, nullptr);
@@ -65,9 +64,9 @@ int main() {
 
     /*  build and compile all of our shaders
      -----------------------------------------*/
-    char vertex_shader_path[] = R"(D:\Thiago\DragonSlayer\resources\vertexShader.glsl)";
-    char o_fragment_shader_path[] = R"(D:\Thiago\DragonSlayer\resources\frag_shader_orange.glsl)";
-    Shader shader1(vertex_shader_path, o_fragment_shader_path);
+    char vertex_shader_path[] = R"(D:\Thiago\DragonSlayer\resources\vertex_shader.glsl)";
+    char o_fragment_shader_path[] = R"(D:\Thiago\DragonSlayer\resources\frag_shader.glsl)";
+    Shader shader(vertex_shader_path, o_fragment_shader_path);
 
     /* set up vertex data and configure vertex attributes
      ---------------------------------------------------*/
@@ -165,11 +164,20 @@ int main() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    int mixUniform = glGetUniformLocation(shader1.id, "mixValue");
-    shader1.use();
+    int mixUniform = glGetUniformLocation(shader.id, "mixValue");
+    shader.use();
+    shader.set("texture0", 0);
+    shader.set("texture1", 1);
     glUniform1f(mixUniform, mixValue);
-    shader1.set("texture0", 0);
-    shader1.set("texture1", 1);
+
+    /* create and set transformation matrix uniform
+     ----------------------------------------------*/
+    glm::mat4 transform(1.0f);
+    glm::vec3 scale_vector(0.5f,  0.5f, 0.0f);
+
+    transform = glm::scale(transform, scale_vector);
+    int transformLoc = glGetUniformLocation(shader.id, "transform");
+    glUniformMatrix4fv(transformLoc, 1, false, glm::value_ptr(transform));
 
 
     /* render loop
@@ -177,6 +185,9 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         processInput(window);
         glUniform1f(mixUniform, mixValue);
+
+        transform = glm::rotate(transform, ((float)glfwGetTime()) / 1000, glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(transformLoc, 1, false, glm::value_ptr(transform));
 
         // clear buffer
         glClearColor(0.3f, 0.1f, 0.7f, 1.0f);
@@ -190,7 +201,7 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, texture1);
 
         // render container
-        shader1.use();
+        shader.use();
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
